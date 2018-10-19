@@ -93,3 +93,5 @@ function Boleta (book, tradeDate, ativo, contraparte, operation, lote, tradePric
         return pnl
     }
 }
+
+export { Book , Boleta }
