@@ -1,9 +1,10 @@
-function Book (key, title, resultadosPossiveis, settleDate) {
-    this.key = key
+function Book (id, title, resultadosPossiveis = [], settleDate = null) {
+    this.id = id
     this.title = title
     this.resultadosPossiveis = resultadosPossiveis
     this.settleDate = settleDate
     this.resultado = null
+    this.boletas = []
     
     this.setResultado = (resultado) => {
         if ( this.resultadosPossiveis.includes(resultado) ){
@@ -20,16 +21,26 @@ function Book (key, title, resultadosPossiveis, settleDate) {
 
     this.deleteResultadoPossivel = (resultadoPossivel) => {
         if ( !this.resultadosPossiveis.includes(resultadoPossivel) ) {
-            return
+            console.log('não é um resultado valido')
+            return 
         }
         this.resultadosPossiveis = this.resultadosPossiveis.filter(
             resultado => resultado !== resultadoPossivel
         )
     }
+
+    this.addBoleta = (boleta) => {
+        this.boletas.push(boleta)
+    }
+
+    this.deleteBoleta = (id) => {
+        this.boletas = this.boletas.filter(boleta => boleta.id !== id)
+    }
 }
 
 
-function Boleta (book, tradeDate, ativo, contraparte, operation, lote, tradePrice, liquidado = false, settle = null, comentarios = null) {
+function Boleta (id, book, tradeDate, ativo, contraparte, operation, lote, tradePrice, liquidado = false, settle = null, comentarios = null) {
+    this.id = id
     this.book = book
     this.tradeDate = tradeDate
     this.ativo = this.book.resultadosPossiveis.includes(ativo) ? ativo : null
