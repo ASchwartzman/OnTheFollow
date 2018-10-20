@@ -5,9 +5,12 @@ export default class HeaderIconExample extends Component {
     return (
         <Header>
           <Left>
+            <Button transparent>
+              <Icon name='menu' />
+            </Button>
           </Left>
           <Body>
-            <Title>Boletas</Title>
+            <Title>{this.props.bookTitle}</Title>
           </Body>
           <Right>
             <Button transparent>
