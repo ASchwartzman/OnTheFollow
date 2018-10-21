@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View } from 'react-native'
+import { View , ListView,} from 'react-native'
 import WalletHeader from '../components/WalletHeader'
 import { Container,
     Header,
@@ -7,28 +7,43 @@ import { Container,
     List, 
     ListItem,
     Left,
-    Body, Right, Thumbnail, Text 
+    Body, Right, Thumbnail, Text ,
+    Button,
+    Icon,
+    SwipeRow,
 } from 'native-base'
 import BoletaItem from '../components/BoletaItem'
+import moment from 'moment'
+import 'moment/locale/pt-br'
+import WalletFooter from '../components/WalletFooter'
 
 export default class Wallet extends Component {
-    
-    state = {
-        boletas :[
-            {id: 1, asset: 'Mito', operation: 'C', lote: 100, price: 55, contraparte: 'Marcus', date: new Date()},
-            {id: 2, asset: 'Haddad', operation: 'C', lote: 100, price: 30, contraparte: 'Marcus', date: new Date()},
-            {id: 3, asset: 'Xuxu', operation: 'V', lote: 100, price: 16, contraparte: 'Marcus', date: new Date()},
-            {id: 4, asset: 'Marinoca', operation: 'C', lote: 100, price: 11, contraparte: 'Marcus', date: new Date()},
-            {id: 5, asset: 'Ciro', operation: 'V', lote: 100, price: 9, contraparte: 'Marcus', date: new Date()},
-        ],
-        showAddBoleta: false,
+    static navigationOptions = {
+        header: null,
+    }
+
+    constructor(props){
+        super(props)
+        
+        this.state = {
+            bookTitle:'Copa 2018',
+            boletas:[
+                {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: '15/09/2018'},
+                {id: 2, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: '01/06/2013'},
+                {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: '01'},
+                {id: 4, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Sudano', lote: 20, tradePrice: 22, tradeDate: new Date()},
+                {id: 5, checked:false, ativo:'Belgica', operation: 'V', contraparte: 'Artur Lida', lote: 30, tradePrice: 9, tradeDate: new Date()},
+                {id: 6, checked:true, ativo:'Argentina', operation: 'V', contraparte: 'Caetano Ramos', lote: 75, tradePrice: 7, tradeDate: new Date()},              
+            ],
+            showAddBoleta: false,
+        }
     }
 
     addBoleta = boleta => {
         const boletas = [ ...this.state.boletas ]
         boletas.push({
             id: Math.random(),
-            date: bolea.date,
+            checked: boleta,
             asset: boleta.asset,
             operation: boleta.operation,
             lote: boleta.lote,
@@ -38,137 +53,50 @@ export default class Wallet extends Component {
         this.setState({ boletas })
     }
 
+    removeBoleta = id => {
+        let boletas = [ ...this.state.boletas ]
+        boletas = boletas.filter(boleta => boleta.id != id)
+        this.setState({ boletas })
+    }
+
+    _renderBoletaItem = (boleta) => {
+        return(
+            <SwipeRow style={{flex: 1}}
+                disableRightSwipe
+                rightOpenValue={-85}
+                body={
+                <BoletaItem checked ={boleta.checked} 
+                        ativo={boleta.ativo}
+                        operation = {boleta.operation}
+                        contraparte={boleta.contraparte}
+                        lote={boleta.lote}
+                        tradePrice={boleta.tradePrice}
+                        tradeDate={moment(boleta.tradeDate,'DD/MM/YYYY').locale('pt-br').format('D [de] MMM [,] YYYY')}/>
+                }
+                right={
+                    <Button danger onPress={() => this.removeBoleta(boleta.id)}>
+                      <Icon active name="trash" style={{fontSize:33}}/>
+                    </Button>
+                }
+            />
+        )
+    }
+
+    _openNovaBoleta = () => {
+        this.props.navigation.navigate('BoletaScreen')
+    } 
+
     render() {
         return (
             <Container>
-               <WalletHeader bookTitle={'Copa 2018'}/>
+                <WalletHeader bookTitle={this.state.bookTitle} checked={false}/>
                 <Content>
-                    <List>
-                        <BoletaItem checked ={true} 
-                                    ativo={'Alemanha'}
-                                    operation = {'C'}
-                                    contraparte={'Fill'}
-                                    lote={100}
-                                    tradePrice={19}
-                                    tradeDate={'02 de dez'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                        <BoletaItem checked ={true} 
-                                    ativo={'Alemanha'}
-                                    operation = {'C'}
-                                    contraparte={'Fill'}
-                                    lote={100}
-                                    tradePrice={19}
-                                    tradeDate={'02 de dez'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                        <BoletaItem checked ={true} 
-                                    ativo={'Alemanha'}
-                                    operation = {'C'}
-                                    contraparte={'Fill'}
-                                    lote={100}
-                                    tradePrice={19}
-                                    tradeDate={'02 de dez'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                        <BoletaItem checked ={true} 
-                                    ativo={'Alemanha'}
-                                    operation = {'C'}
-                                    contraparte={'Fill'}
-                                    lote={100}
-                                    tradePrice={19}
-                                    tradeDate={'02 de dez'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                        <BoletaItem checked ={true} 
-                                    ativo={'Alemanha'}
-                                    operation = {'C'}
-                                    contraparte={'Fill'}
-                                    lote={100}
-                                    tradePrice={19}
-                                    tradeDate={'02 de dez'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'Brasil'}
-                                    operation = {'V'}
-                                    contraparte={'Marcus'}
-                                    lote={50}
-                                    tradePrice={23}
-                                    tradeDate={'22 de abr'}/>
-                        <BoletaItem checked ={false} 
-                                    ativo={'França'}
-                                    operation = {'V'}
-                                    contraparte={'Naman'}
-                                    lote={35}
-                                    tradePrice={14}
-                                    tradeDate={'15 de jan'}/>
-                       
-                        
-                    </List>
+                    <List dataArray={this.state.boletas}
+                        renderRow={(boleta) => this._renderBoletaItem(boleta)}
+                        />
                 </Content>
-
+                <WalletFooter onPressTab2={() => this._openNovaBoleta()}/>
             </Container>
-        )
-    }
+        )                
+     }
 }

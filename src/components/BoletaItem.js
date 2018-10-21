@@ -4,17 +4,18 @@ import { ListItem , Left, Body, Right, Text, CheckBox, Badge, Icon} from 'native
 
 export default class BoletaItem extends Component {
 
-    badgeColor = (this.props.operation === 'C') ? {backgroundColor:'darkblue'} : {backgroundColor:'darkred'}
+    badgeColor = (this.props.operation === 'C') ? {backgroundColor:'#5cb85c'} : {backgroundColor:'#d9534f'}
 
     render() {
         return (
-            <ListItem>
+            <ListItem style={{borderBottomWidth: 0}}>
                 <View style={styles.left}>
-                    <CheckBox onPress={this.props.onPressCheckBox} checked={this.props.checked} color='green'/>
+                    <CheckBox onPress={this.props.onPressCheckBox} checked={this.props.checked}
+                            color='rgb(150,150,150)' style={{fontSize:100}}/>
                 </View>
-                <TouchableOpacity style={styles.touchable}>   
+                <TouchableOpacity onPress={this.props.onPressBody} style={styles.touchable}>   
                     <Body style={styles.body}>
-                        <View >    
+                        <View>    
                             <Text style={styles.ativo}>{this.props.ativo}</Text>
                             <Text note style={{fontWeight:'bold'}}>{this.props.contraparte}</Text>
                             <Text note >{this.props.tradeDate}</Text>
@@ -22,7 +23,7 @@ export default class BoletaItem extends Component {
                         
                         <View>    
                             <Text note style={{fontWeight:'bold'}}>Lote <Text note>{this.props.lote}</Text></Text>
-                            <Text note style={{fontWeight:'bold'}}>Preço $<Text note>{this.props.tradePrice}</Text></Text>
+                            <Text note style={{fontWeight:'bold'}}>Preço <Text note>${this.props.tradePrice}</Text></Text>
                         </View>
                     </Body>
                     <View style={styles.right}>
@@ -31,8 +32,7 @@ export default class BoletaItem extends Component {
                         </Badge>
                             <Icon type='FontAwesome' name='angle-right' style={styles.rightArrow}/>
                     </View>
-                </TouchableOpacity>
-                
+                </TouchableOpacity>               
             </ListItem>
         )
     }
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     right:{  
         flexDirection:'row',
         width:60,
-        marginRight: 15,
+        marginRight: 35,
         justifyContent:'space-around',
         alignItems:'center',
     },
