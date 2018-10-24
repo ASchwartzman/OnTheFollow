@@ -4,7 +4,12 @@ import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'nativ
 export default class HeaderIconExample extends Component {
 
   state={
-    checkedButton: this.props.checked ? 'eye' : 'eye-off'
+    checkedButton: null
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let checkedButton = this.props.checked ? 'eye' : 'eye-off'
+    this.setState({ checkedButton })
   }
 
   render() {

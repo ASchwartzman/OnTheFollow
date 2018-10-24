@@ -85,7 +85,7 @@ export default class AddBoleta extends Component {
                             locale={"en"}
                             timeZoneOffsetInMinutes={undefined}
                             modalTransparent={true}
-                            animationType={"default"}
+                            animationType={'slide'}
                             androidMode={"default"}
                             placeHolderText="Selecione a data"
                             textStyle={{ color: "grey" }}
@@ -100,7 +100,8 @@ export default class AddBoleta extends Component {
                             placeholder='Selecione o ativo'
                             iosIcon={<Icon name="ios-arrow-down-outline" />}
                             mode='dropdown'
-                            style={ {color:'orange'} }
+                            style={{ }}
+                            placeholderStyle={{color:'#E65100'}}
                             selectedValue={this.state.ativo}
                             onValueChange={this.onAtivoChange.bind(this)}>
 
@@ -116,6 +117,7 @@ export default class AddBoleta extends Component {
                             iosIcon={<Icon name="ios-arrow-down-outline" />}
                             mode='dropdown'
                             style={{  }}
+                            placeholderStyle={{color:'#E65100'}}
                             selectedValue={this.state.operation}
                             onValueChange={this.onOperationChange.bind(this)}>
 
@@ -129,6 +131,7 @@ export default class AddBoleta extends Component {
                         <Label style={styles.label}>Lote</Label>
                         <Input style={styles.input} 
                                 placeholder='  ...   '
+                                placeholderTextColor={'#E65100'}
                                 keyboardType='numeric'
                                 onChangeText={this.onLoteChange.bind(this)}
                                 />
@@ -138,6 +141,7 @@ export default class AddBoleta extends Component {
                         <Label style={styles.label}>Preço</Label>
                         <Input style={styles.input} 
                                 placeholder='  $   '
+                                placeholderTextColor={'#E65100'}
                                 keyboardType='numeric'
                                 onChangeText={this.onPriceChange.bind(this)}
                                 />
@@ -147,6 +151,7 @@ export default class AddBoleta extends Component {
                         <Label style={styles.label}>Contraparte</Label>
                         <Input style={styles.input} 
                                 placeholder='Nome do trouxa'
+                                placeholderTextColor={'#E65100'}
                                 keyboardType='default'
                                 onChangeText={this.onContraparteChange.bind(this)}
                                 />
@@ -161,7 +166,7 @@ export default class AddBoleta extends Component {
                             locale={"en"}
                             timeZoneOffsetInMinutes={undefined}
                             modalTransparent={true}
-                            animationType={"default"}
+                            animationType={'slide'}
                             androidMode={"default"}
                             placeHolderText="Selecione o vencimento"
                             textStyle={{ color: "grey" }}
