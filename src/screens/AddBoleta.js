@@ -136,7 +136,7 @@ export default class AddBoleta extends Component {
                                 placeholder='Selecione o ativo'
                                 iosIcon={<Icon name="ios-arrow-down-outline" />}
                                 mode='dropdown'
-                                style={{ }}
+                                style={{ flexDirection:'column' }}
                                 placeholderStyle={{color:'#E65100'}}
                                 selectedValue={this.state.ativo}
                                 onValueChange={this.onAtivoChange.bind(this)}>
