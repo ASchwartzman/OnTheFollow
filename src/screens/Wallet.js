@@ -10,18 +10,9 @@ import 'moment/locale/pt-br'
 import WalletFooter from '../components/WalletFooter'
 
 const boletas = [
-    {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: '15/09/2018'},
-    {id: 2, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: '01/06/2013'},
-    {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: '01'},
-    // {id: 4, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Sudano', lote: 20, tradePrice: 22, tradeDate: new Date()},
-    // {id: 5, checked:false, ativo:'Belgica', operation: 'V', contraparte: 'Artur Lida', lote: 30, tradePrice: 9, tradeDate: new Date()},
-    // {id: 6, checked:true, ativo:'Argentina', operation: 'V', contraparte: 'Caetano Ramos', lote: 75, tradePrice: 7, tradeDate: new Date()},              
-    // {id: 7, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: '15/09/2018'},
-    // {id: 8, checked:false, ativo:'Brasil', operation: 'C', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: '01/06/2013'},
-    // {id: 9, checked:false, ativo:'França', operation: 'C', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: '01'},
-    // {id: 10, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Sudano', lote: 20, tradePrice: 22, tradeDate: new Date()},
-    // {id: 11, checked:false, ativo:'Belgica', operation: 'V', contraparte: 'Artur Lida', lote: 30, tradePrice: 9, tradeDate: new Date()},
-    // {id: 12, checked:true, ativo:'Argentina', operation: 'V', contraparte: 'Caetano Ramos', lote: 75, tradePrice: 7, tradeDate: new Date()},              
+    {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
+    {id: 2, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
+    {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
 ]
 
 export default class Wallet extends Component {
@@ -32,7 +23,7 @@ export default class Wallet extends Component {
     constructor(props){
         super(props)
         this.state = {
-            resultadosPosiveis: ['Brasil','Argentina','França','Alemanha'],
+            resultadosPossiveis: ['Brasil','Argentina','França','Alemanha'],
             bookTitle:'Copa 2018',
             boletas: boletas,
             boletasVisiveis: [],
@@ -43,22 +34,36 @@ export default class Wallet extends Component {
     
     newBoletaAdd = (newBoleta) => {
         // const newBoleta = this.props.navigation.getParam('newBoleta')
+        
         const boletas_id = []
         const boletas = [...this.state.boletas]
-
-        console.log(`NewBoleta:${newBoleta}`)
 
         boletas.forEach((boleta) => {
             boletas_id.push(boleta.id)
         })
-        console.log(boletas_id)
+
         if(boletas_id.includes(newBoleta.id)){
-            return
+            boletas.forEach((boleta, index)=>{
+                if (boleta.id === newBoleta.id) {
+                    boletas[index] = newBoleta
+                }
+            })
+            
+            console.log('Antes',this.state.boletas)
+            
+            this.setState({boletas}, () => {
+                this.filterBoletas()
+                this.props.navigation.setParams({newBoleta:null})
+                console.log('Depois',this.state.boletas)
+                // alert('Boleta Atualizada')
+            })
         } else {
             boletas.push(newBoleta)
+            this.setState({boletas}, this.filterBoletas )
+            // alert('Boleta Salva')
         }
 
-        this.setState({boletas}, this.filterBoletas)
+        
     }
 
     filterBoletas = () => {
@@ -75,11 +80,27 @@ export default class Wallet extends Component {
         this.setState({ boletas }, this.filterBoletas)
     }
 
+    onItemPress = id => {
+        const boletas = [ ...this.state.boletas]
+        const resultadosPossiveis = [ ...this.state.resultadosPossiveis]
+        let boleta_selecionada = null
+        boletas.forEach((boleta, index) => {
+            if(boleta.id === id){
+                boleta_selecionada = boletas[index]
+            }
+        })
+        
+        this.props.navigation.navigate('BoletaScreen',{
+            resultadosPossiveis,
+            boleta_selecionada
+        })
+    }
+
     renderItem = ({item}) => {
         
         return (
             <BoletaItem onRightButtonPress={() => this.removeBoleta(item.id)}
-                        onPressBody={() => alert(item.ativo)}
+                        onPressBody={() => this.onItemPress(item.id)}
                         checked ={item.checked} 
                         ativo={item.ativo}
                         operation = {item.operation}
@@ -91,8 +112,22 @@ export default class Wallet extends Component {
     }
 
     _openNovaBoleta = () => {
-        const resultadosPossiveis = [ ...this.state.resultadosPosiveis]
-        this.props.navigation.navigate('BoletaScreen',{resultadosPossiveis})
+        const resultadosPossiveis = [ ...this.state.resultadosPossiveis]
+        
+        this.props.navigation.navigate('BoletaScreen',{
+            resultadosPossiveis,
+            boleta_selecionada: { 
+                id: Math.random(), 
+                ativo: null,
+                operation:null,
+                lote: null,
+                tradePrice: null,
+                contraparte:null,
+                tradeDate:new Date(),
+                settleDate: null,
+                comments: '',
+              }
+        })
     } 
 
     toggleEye = () => {

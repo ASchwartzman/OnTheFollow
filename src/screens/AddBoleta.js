@@ -17,28 +17,29 @@ export default class AddBoleta extends Component {
     constructor(props) {
         super(props)
         this.state = {
-          resultadosPossiveis:this.props.navigation.getParam('resultadosPossiveis'),  
-          ativo: null,
-          operation:null,
-          lote: null,
-          tradePrice: null,
-          contraparte:null,
-          tradeDate:new Date(),
-          settleDate: null,
-          comments: '',
+          resultadosPossiveis:this.props.navigation.getParam('resultadosPossiveis'),
+          
+        //   ativo: null,
+        //   operation:null,
+        //   lote: null,
+        //   tradePrice: null,
+        //   contraparte:null,
+        //   tradeDate:new Date(),
+        //   settleDate: null,
+        //   comments: '',
         }
       }
     onPressSave = () => {
-        // if(this.state.ativo == null || this.state.operation === null || 
-        //     this.state.lote === null || this.state.tradePrice === null ||
-        //     this.state.contraparte === null) {
+        if(this.state.ativo == null || this.state.operation === null || 
+            this.state.lote === null || this.state.tradePrice === null ||
+            this.state.contraparte === null) {
             
-        //     Alert.alert('Campos Incompletos','Preencha os campos em laranja')
-        //     return
-        // }
+            Alert.alert('Campos Incompletos','Preencha os campos em laranja')
+            return
+        }
 
         let newBoleta ={
-            id: Math.random(),
+            id: this.state.id,
             checked: false,
             ativo: this.state.ativo,
             operation: this.state.operation,
@@ -92,7 +93,20 @@ export default class AddBoleta extends Component {
     cancelarBoleta = () => {
         this.props.navigation.navigate('WalletScreen')
     }
-
+    componentDidMount(){
+        const boleta = this.props.navigation.getParam('boleta_selecionada') 
+        this.setState({
+            id: boleta.id,
+            ativo: boleta.ativo,
+            operation: boleta.operation,
+            lote: boleta.lote,
+            tradePrice: boleta.tradePrice,
+            contraparte: boleta.contraparte,
+            tradeDate: boleta.tradeDate,
+            settleDate: boleta.settleDate,
+            comments: boleta.comments,
+        })
+    }
     
     render() {
         let resultadosPossiveis = this.state.resultadosPossiveis.map( (res,i) => {
@@ -115,7 +129,7 @@ export default class AddBoleta extends Component {
                                 modalTransparent={true}
                                 animationType={'slide'}
                                 androidMode={"default"}
-                                placeHolderText={moment(this.state.date).locale('pt-br').format('DD/MM/YYYY')}
+                                placeHolderText={moment(this.state.tradeDate).locale('pt-br').format('DD/MM/YYYY')}
                                 value={this.state.tradeDate}
                                 textStyle={{ color: "grey" }}
                                 placeHolderTextStyle={{ color: "#d3d3d3" }}
@@ -163,6 +177,7 @@ export default class AddBoleta extends Component {
                             <Label style={styles.label}>Lote</Label>
                             <Input style={styles.input} 
                                     placeholder='  ...   '
+                                    value={this.state.lote ? `${this.state.lote}` : null}
                                     placeholderTextColor={'#E65100'}
                                     keyboardType='numeric'
                                     onChangeText={this.onLoteChange.bind(this)}
@@ -173,6 +188,7 @@ export default class AddBoleta extends Component {
                             <Label style={styles.label}>Preço</Label>
                             <Input style={styles.input} 
                                     placeholder='  $   '
+                                    value={this.state.tradePrice ? `${this.state.tradePrice}` : null}
                                     placeholderTextColor={'#E65100'}
                                     keyboardType='numeric'
                                     onChangeText={this.onPriceChange.bind(this)}
