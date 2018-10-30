@@ -18,15 +18,6 @@ export default class AddBoleta extends Component {
         super(props)
         this.state = {
           resultadosPossiveis:this.props.navigation.getParam('resultadosPossiveis'),
-          
-        //   ativo: null,
-        //   operation:null,
-        //   lote: null,
-        //   tradePrice: null,
-        //   contraparte:null,
-        //   tradeDate:new Date(),
-        //   settleDate: null,
-        //   comments: '',
         }
       }
     onPressSave = () => {
@@ -141,6 +132,7 @@ export default class AddBoleta extends Component {
                             <Label style={styles.label}>Ativo</Label>
                             <Picker
                                 iosHeader='Ativos'
+                                headerBackButtonText='Voltar'
                                 placeholder='Selecione o ativo'
                                 iosIcon={<Icon name="ios-arrow-down-outline" />}
                                 mode='dropdown'
@@ -159,6 +151,7 @@ export default class AddBoleta extends Component {
                             <Label style={styles.label}>Operação</Label>
                             <Picker 
                                 iosHeader='Operação'
+                                headerBackButtonText='Voltar'
                                 placeholder='Compra | Venda'
                                 iosIcon={<Icon name="ios-arrow-down-outline" />}
                                 mode='dropdown'
@@ -199,6 +192,7 @@ export default class AddBoleta extends Component {
                             <Label style={styles.label}>Contraparte</Label>
                             <Input style={styles.input} 
                                     placeholder='Nome do trouxa'
+                                    value={this.state.contraparte ? `${this.state.contraparte}` : null}
                                     placeholderTextColor={'#E65100'}
                                     keyboardType='default'
                                     onChangeText={this.onContraparteChange.bind(this)}
@@ -216,7 +210,8 @@ export default class AddBoleta extends Component {
                                 modalTransparent={true}
                                 animationType={'slide'}
                                 androidMode={"default"}
-                                placeHolderText="Selecione o vencimento"
+                                placeHolderText={moment(this.state.settleDate).locale('pt-br').format('DD/MM/YYYY')}
+                                value={this.state.settleDate}
                                 textStyle={{ color: "grey" }}
                                 placeHolderTextStyle={{ color: "#d3d3d3" }}
                                 onDateChange={this.onSettleDateChange.bind(this)}
@@ -227,6 +222,8 @@ export default class AddBoleta extends Component {
                             <Label>Comentários</Label>
                             <Textarea style={styles.textArea}
                                 placeholder='' 
+                                selectionColor='rgb(76,217,100)'
+                                value={this.state.comments ? `${this.state.comments}` : null}
                                 rowSpan={5}
                                 onChangeText={this.onCommentChange.bind(this)}/>
                         </Item>
@@ -257,7 +254,6 @@ const styles = StyleSheet.create({
         textAlign:'center'
     },
     input:{
-        textAlign:'center',
         backgroundColor:null,
         textAlign:'right',
         paddingRight:20
@@ -271,5 +267,6 @@ const styles = StyleSheet.create({
         textAlign:'left',
         width:'100%',
         paddingTop: 15,
+        color:'rgb(76,217,100)'
     }
 })

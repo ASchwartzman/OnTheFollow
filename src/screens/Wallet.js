@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { FlatList, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, Alert } from 'react-native'
 import WalletHeader from '../components/WalletHeader'
 import { Container,
     Content,
@@ -25,6 +25,7 @@ export default class Wallet extends Component {
         this.state = {
             resultadosPossiveis: ['Brasil','Argentina','França','Alemanha'],
             bookTitle:'Copa 2018',
+            settleDate: new Date('2018-12-15'),
             boletas: boletas,
             boletasVisiveis: [],
             showAddBoleta: false,
@@ -53,14 +54,13 @@ export default class Wallet extends Component {
             
             this.setState({boletas}, () => {
                 this.filterBoletas()
-                this.props.navigation.setParams({newBoleta:null})
                 console.log('Depois',this.state.boletas)
-                // alert('Boleta Atualizada')
+                Alert.alert('Boleta Atualizada')
             })
         } else {
             boletas.push(newBoleta)
             this.setState({boletas}, this.filterBoletas )
-            // alert('Boleta Salva')
+            Alert.alert('Boleta Salva')
         }
 
         
@@ -124,7 +124,7 @@ export default class Wallet extends Component {
                 tradePrice: null,
                 contraparte:null,
                 tradeDate:new Date(),
-                settleDate: null,
+                settleDate: this.state.settleDate,
                 comments: '',
               }
         })
@@ -146,7 +146,8 @@ export default class Wallet extends Component {
     componentDidUpdate() {
         const newBoleta = this.props.navigation.getParam('newBoleta')
         if (newBoleta) {
-            this.newBoletaAdd(newBoleta)
+            this.props.navigation.setParams({newBoleta:null})
+            this.newBoletaAdd(newBoleta)   
         }
     }
 

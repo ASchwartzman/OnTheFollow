@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {TouchableWithoutFeedback, Keyboard} from 'react-native'
-import { Container, Header, Left, Body, Right, Button, Text, Title } from 'native-base'
+import { Icon, Header, Left, Body, Right, Button, Text, Title } from 'native-base'
 
 export default class AddBoletaHeader extends Component {
 
@@ -12,7 +12,7 @@ export default class AddBoletaHeader extends Component {
                     <Left>
                         <Button hasText transparent
                             onPress={this.props.onCancel}>
-                            <Text>Cancelar</Text>
+                            <Icon name='arrow-back' />
                         </Button>
                     </Left>
                     <Body>
