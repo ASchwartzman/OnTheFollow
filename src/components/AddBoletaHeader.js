@@ -5,19 +5,18 @@ import { Icon, Header, Left, Body, Right, Button, Text, Title } from 'native-bas
 export default class AddBoletaHeader extends Component {
 
     render() {
-        let header = 'Nova Boleta'
 
         return (
                 <Header>
                     <Left>
-                        <Button hasText transparent
+                        <Button transparent
                             onPress={this.props.onCancel}>
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
                     <Body>
                         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                            <Title>{header}</Title>
+                            <Title>{this.props.header}</Title>
                         </TouchableWithoutFeedback>
                     </Body>
                     <Right>

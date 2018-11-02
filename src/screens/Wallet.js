@@ -13,6 +13,15 @@ const boletas = [
     {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
     {id: 2, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
     {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
+    {id: 4, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
+    {id: 5, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
+    {id: 6, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
+    {id: 7, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
+    {id: 8, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
+    {id: 9, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
+    {id: 10, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
+    {id: 11, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
+    {id: 12, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
 ]
 
 export default class Wallet extends Component {
@@ -30,6 +39,7 @@ export default class Wallet extends Component {
             boletasVisiveis: [],
             showAddBoleta: false,
             filtroChecked: false,
+            scroll: true,
         }
     }
     
@@ -68,11 +78,9 @@ export default class Wallet extends Component {
 
     filterBoletas = () => {
         let oldBoletas = [ ...this.state.boletas ]
-        let refresh = !this.state.refresh
         let boletasVisiveis = this.state.filtroChecked ? oldBoletas.filter(item => !item.checked) : oldBoletas
        
-        this.setState({boletasVisiveis})
-        
+        this.setState({boletasVisiveis})     
     }
 
     removeBoleta = id => {     
@@ -99,7 +107,10 @@ export default class Wallet extends Component {
     renderItem = ({item}) => {
         
         return (
-            <BoletaItem onRightButtonPress={() => this.removeBoleta(item.id)}
+            <BoletaItem 
+                        onSwipeStart={()=> this.setState({ scroll: false })}
+                        onSwipeRelease={() => this.setState({ scroll: true })}
+                        onRightButtonPress={() => this.removeBoleta(item.id)}
                         onPressBody={() => this.onItemPress(item.id)}
                         checked ={item.checked} 
                         ativo={item.ativo}
@@ -115,6 +126,25 @@ export default class Wallet extends Component {
         const resultadosPossiveis = [ ...this.state.resultadosPossiveis]
         
         this.props.navigation.navigate('BoletaScreen',{
+            resultadosPossiveis,
+            boleta_selecionada: { 
+                id: Math.random(), 
+                ativo: null,
+                operation:null,
+                lote: null,
+                tradePrice: null,
+                contraparte:null,
+                tradeDate:new Date(),
+                settleDate: this.state.settleDate,
+                comments: '',
+              }
+        })
+    }
+
+    _openNovoEvento = () => {
+        const resultadosPossiveis = [ ...this.state.resultadosPossiveis]
+        
+        this.props.navigation.navigate('EventoScreen',{
             resultadosPossiveis,
             boleta_selecionada: { 
                 id: Math.random(), 
@@ -161,9 +191,11 @@ export default class Wallet extends Component {
                 <WalletHeader 
                     bookTitle={`${this.state.bookTitle} (${this.state.boletasVisiveis.length})`} 
                     checked={this.state.filtroChecked}
-                    onPressEye={() => this.toggleEye()}/>
+                    onPressEye={() => this.toggleEye()}
+                    onPressEdit={() => this._openNovoEvento()}/>
                 <Content>
                     <FlatList style={styles.listContainer}
+                        scrollEnabled={this.state.scroll}
                         keyExtractor={item => `${item.id}`}
                         extraData={this.state}
                         data={this.state.boletasVisiveis}

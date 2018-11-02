@@ -5,7 +5,6 @@ import {Form, Picker, Textarea, Input, Item, Label, Icon, DatePicker, Container,
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import AddBoletaHeader from '../components/AddBoletaHeader'
-// import PickerAtivo from '../components/PickerAtivo'
 
 export default class AddBoleta extends Component {
     static navigationOptions = {
@@ -105,9 +104,9 @@ export default class AddBoleta extends Component {
 
         return (
             <Container>      
-                <AddBoletaHeader onSave={()=>this.onPressSave()} 
+                <AddBoletaHeader onSave={()=>this.onPressSave()}
                                  onCancel={()=> this.cancelarBoleta()}
-                                 header={'Nova Boleta'}   />                                 
+                                 header={'Novo Evento'}/>                                 
                 <KeyboardAwareScrollView>
                     <Form>
                         <Item inlineLabel style={styles.item}>
@@ -229,17 +228,6 @@ export default class AddBoleta extends Component {
                                 onChangeText={this.onCommentChange.bind(this)}/>
                         </Item>
 
-                        
-                
-
-                        {/* <Text>Ativo: {this.state.ativo}</Text>
-                        <Text>Operation: {this.state.operation}</Text>
-                        <Text>Lote: {this.state.lote}</Text>
-                        <Text>Price: {this.state.tradePrice}</Text>
-                        <Text>Contraparte: {this.state.contraparte}</Text>
-                        <Text>Trade Date: {moment(this.state.tradeDate).locale('pt-br').format('D [de] MMM [,] YYYY')}</Text>
-                        <Text>Settle Date: {moment(this.state.settleDate).locale('pt-br').format('D [de] MMM [,] YYYY')}</Text>
-                        <Text>Comentarios: {this.state.comments}</Text> */}
                     </Form>
                 </KeyboardAwareScrollView>
 

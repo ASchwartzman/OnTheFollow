@@ -33,7 +33,9 @@ export default class BoletaItem extends Component {
 
     render() {
         return (
-            <Swipeable rightButtons={this.renderRightButtons()}>
+            <Swipeable rightButtons={this.renderRightButtons()}
+                        onSwipeStart={this.props.onSwipeStart}
+                        onSwipeRelease={this.props.onSwipeRelease}>
                 <ListItem style={{borderBottomWidth: 0.2}}>
                     <View style={styles.left}>
                         <CheckBox onPress={this.props.onPressCheckBox} checked={this.props.checked}
