@@ -38,8 +38,8 @@ export default class BoletaItem extends Component {
                         onSwipeRelease={this.props.onSwipeRelease}>
                 <ListItem style={{borderBottomWidth: 0.2}}>
                     <View style={styles.left}>
-                        <CheckBox onPress={this.props.onPressCheckBox} checked={this.props.checked}
-                                color='rgb(150,150,150)' style={{fontSize:100}}/>
+                        <CheckBox onPress={this.props.onPressCheckbox} checked={this.props.checked}
+                                color='green' style={{height:27, width: 27, alignItems:'center', justifyContent:'center', borderRadius: 27}} />
                     </View>
                     <TouchableOpacity onPress={this.props.onPressBody} style={styles.touchable}>   
                         <Body style={styles.body}>

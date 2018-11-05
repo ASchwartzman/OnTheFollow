@@ -3,6 +3,8 @@ import { FlatList, StyleSheet, Alert } from 'react-native'
 import WalletHeader from '../components/WalletHeader'
 import { Container,
     Content,
+    Toast,
+    ActionSheet,
 } from 'native-base'
 import BoletaItem from '../components/BoletaItem'
 import moment from 'moment'
@@ -24,6 +26,10 @@ const boletas = [
     {id: 12, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
 ]
 
+const eventos = [
+    {id:1, titulo:'Copa 2018', ativos: ['Brasil','Argentina','França','Alemanha'], vencimento: new Date('2015-09-17'), boletas: boletas, comments:'Sem Comentários' }
+]
+
 export default class Wallet extends Component {
     static navigationOptions = {
         header: null,
@@ -32,6 +38,8 @@ export default class Wallet extends Component {
     constructor(props){
         super(props)
         this.state = {
+            eventos: eventos,
+            eventoAtivo: eventos[0].id,
             resultadosPossiveis: ['Brasil','Argentina','França','Alemanha'],
             bookTitle:'Copa 2018',
             settleDate: new Date('2018-12-15'),
@@ -44,7 +52,6 @@ export default class Wallet extends Component {
     }
     
     newBoletaAdd = (newBoleta) => {
-        // const newBoleta = this.props.navigation.getParam('newBoleta')
         
         const boletas_id = []
         const boletas = [...this.state.boletas]
@@ -60,23 +67,68 @@ export default class Wallet extends Component {
                 }
             })
             
-            console.log('Antes',this.state.boletas)
-            
-            this.setState({boletas}, () => {
-                this.filterBoletas()
-                console.log('Depois',this.state.boletas)
-                Alert.alert('Boleta Atualizada')
+            this.setState({boletas}, this.filterBoletas)
+            Toast.show({
+                text:'Boleta Atualizada',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'success'
             })
+
         } else {
             boletas.push(newBoleta)
             this.setState({boletas}, this.filterBoletas )
-            Alert.alert('Boleta Salva')
+            Toast.show({
+                text:'Boleta Salva',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'success'
+            })
         }
+    }
 
+    newEventoAdd = (newEvento) => {
         
+        const eventos_id = []
+        const eventos = [...this.state.eventos]
+
+        eventos.forEach((evento) => {
+            eventos_id.push(evento.id)
+        })
+
+        if(eventos_id.includes(newEvento.id)){
+            eventos.forEach((evento, index)=>{
+                if (evento.id === newEvento.id) {
+                    eventos[index] = newEvento
+                }
+            })
+            
+            this.setState({eventos}, this.filterBoletas)
+            Toast.show({
+                text:'Evento Atualizado',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'success'
+            })
+
+        } else {
+            eventos.push(newEvento)
+            this.setState({eventos}, this.filterBoletas )
+            Toast.show({
+                text:'Evento Salvo',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'success'
+            })
+        }
     }
 
     filterBoletas = () => {
+        
         let oldBoletas = [ ...this.state.boletas ]
         let boletasVisiveis = this.state.filtroChecked ? oldBoletas.filter(item => !item.checked) : oldBoletas
        
@@ -104,6 +156,17 @@ export default class Wallet extends Component {
         })
     }
 
+    onCheckboxPress = id => {
+        const boletas = [ ...this.state.boletas]
+        boletas.forEach(boleta => {
+            if (boleta.id == id) {
+                boleta.checked = !boleta.checked
+            }
+        })
+
+        this.setState({boletas}, this.filterBoletas)
+    }
+
     renderItem = ({item}) => {
         
         return (
@@ -112,6 +175,7 @@ export default class Wallet extends Component {
                         onSwipeRelease={() => this.setState({ scroll: true })}
                         onRightButtonPress={() => this.removeBoleta(item.id)}
                         onPressBody={() => this.onItemPress(item.id)}
+                        onPressCheckbox={() => this.onCheckboxPress(item.id)}
                         checked ={item.checked} 
                         ativo={item.ativo}
                         operation = {item.operation}
@@ -120,6 +184,25 @@ export default class Wallet extends Component {
                         tradePrice={item.tradePrice}
                         tradeDate={moment(item.tradeDate,'DD/MM/YYYY').locale('pt-br').format('D [de] MMM [,] YYYY')}/>
         )
+    }
+
+    _openActionSheet = () => {
+        ActionSheet.show({
+            options:['Novo Evento','Nova Boleta','Cancelar'],
+            cancelButtonIndex: 2,  
+        },
+        buttonIndex => {
+            switch(buttonIndex){
+                case 0:
+                    this._openNovoEvento()
+                    break
+                case 1:
+                    this._openNovaBoleta()
+                    break
+                default:
+                    
+            }
+        })
     }
 
     _openNovaBoleta = () => {
@@ -142,20 +225,15 @@ export default class Wallet extends Component {
     }
 
     _openNovoEvento = () => {
-        const resultadosPossiveis = [ ...this.state.resultadosPossiveis]
         
         this.props.navigation.navigate('EventoScreen',{
-            resultadosPossiveis,
-            boleta_selecionada: { 
-                id: Math.random(), 
-                ativo: null,
-                operation:null,
-                lote: null,
-                tradePrice: null,
-                contraparte:null,
-                tradeDate:new Date(),
-                settleDate: this.state.settleDate,
+            evento_selecionado: { 
+                id: Math.random(),
+                titulo: '',
+                ativos: [],
+                vencimento: new Date(),
                 comments: '',
+                boletas:[],
               }
         })
     } 
@@ -175,10 +253,17 @@ export default class Wallet extends Component {
 
     componentDidUpdate() {
         const newBoleta = this.props.navigation.getParam('newBoleta')
+        const newEvento = this.props.navigation.getParam('newEvento')
         if (newBoleta) {
             this.props.navigation.setParams({newBoleta:null})
             this.newBoletaAdd(newBoleta)   
         }
+
+        if (newEvento) {
+            this.props.navigation.setParams({newEvento:null})
+            this.newEventoAdd(newEvento)  
+        }
+        
     }
 
     test = () => {
@@ -193,7 +278,7 @@ export default class Wallet extends Component {
                     checked={this.state.filtroChecked}
                     onPressEye={() => this.toggleEye()}
                     onPressEdit={() => this._openNovoEvento()}/>
-                <Content>
+                <Content scrollEnabled={this.state.scroll}>
                     <FlatList style={styles.listContainer}
                         scrollEnabled={this.state.scroll}
                         keyExtractor={item => `${item.id}`}
@@ -202,7 +287,7 @@ export default class Wallet extends Component {
                         renderItem={({item}) => this.renderItem({item})}
                     />
                 </Content>
-                <WalletFooter onPressTab2={() => this._openNovaBoleta()}/>
+                <WalletFooter onPressTab2={() => this._openActionSheet()}/>
             </Container>
         )                
      }

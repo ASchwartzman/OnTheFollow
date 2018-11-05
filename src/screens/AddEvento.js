@@ -1,12 +1,26 @@
 import React, { Component } from 'react'
-import {StyleSheet, Alert} from 'react-native'
+import {StyleSheet, View, TouchableHighlight , Keyboard} from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import {Form, Picker, Textarea, Input, Item, Label, Icon, DatePicker, Container, Header, TabHeading} from 'native-base'
+import {Form,
+        Picker,
+        Text,
+        Textarea,
+        Input,
+        Item,
+        Label,
+        Icon,
+        DatePicker,
+        Container,
+        Button,
+        List,
+        ListItem} 
+from 'native-base'
+import Modal from 'react-native-modal'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import AddBoletaHeader from '../components/AddBoletaHeader'
 
-export default class AddBoleta extends Component {
+export default class AddEvento extends Component {
     static navigationOptions = {
         header: null,
     }
@@ -15,60 +29,34 @@ export default class AddBoleta extends Component {
     constructor(props) {
         super(props)
         this.state = {
-          resultadosPossiveis:this.props.navigation.getParam('resultadosPossiveis'),
+          modalAtivoVisible: false,
+          novoAtivo: null
         }
-      }
+    }
+
     onPressSave = () => {
-        if(this.state.ativo == null || this.state.operation === null || 
-            this.state.lote === null || this.state.tradePrice === null ||
-            this.state.contraparte === null) {
+        // if(this.state.ativo == null || this.state.operation === null || 
+        //     this.state.lote === null || this.state.tradePrice === null ||
+        //     this.state.contraparte === null) {
             
-            Alert.alert('Campos Incompletos','Preencha os campos em laranja')
-            return
-        }
+        //     Alert.alert('Campos Incompletos','Preencha os campos em laranja')
+        //     return
+        // }
 
-        let newBoleta ={
+        let newEvento = {
             id: this.state.id,
-            checked: false,
-            ativo: this.state.ativo,
-            operation: this.state.operation,
-            lote: this.state.lote,
-            tradePrice: this.state.tradePrice,
-            contraparte: this.state.contraparte,
-            tradeDate: this.state.tradeDate,
-            settleDate: this.state.settleDate,
-            comments: this.state.comments
+            titulo: this.state.titulo,
+            ativos: this.state.ativos,
+            vencimento: this.state.vencimento,
+            comments: this.state.comments,
+            boletas: this.state.boletas,
         }
-        const flagNewBoleta = true
-        this.props.navigation.navigate('WalletScreen', {flagNewBoleta, newBoleta})
+
+        this.props.navigation.navigate('WalletScreen', {newEvento})
     }
 
-    onAtivoChange = (value) => {
-        this.setState({ ativo: value })
-    }
-
-    onOperationChange = (value) => {
-        this.setState({ operation: value })
-    }
-
-    onLoteChange = (value) => {
-        this.setState({ lote: value })
-    }
-
-    onContraparteChange = (value) => {
-        this.setState({ contraparte: value })
-    }
-
-    onPriceChange = (value) => {
-        this.setState({ tradePrice: value })
-    }
-
-    onTradeDateChange = (value) => {
-        this.setState({ tradeDate: value })
-    }
-
-    onSettleDateChange = (value) => {
-        this.setState({ settleDate: value })
+    onTituloChange = (value) => {
+        this.setState({ titulo: value })
     }
 
     onSettleDateChange = (value) => {
@@ -79,160 +67,141 @@ export default class AddBoleta extends Component {
         this.setState({ comments: value })
     }
 
-    cancelarBoleta = () => {
+    cancelarEvento = () => {
         this.props.navigation.navigate('WalletScreen')
     }
-    componentDidMount(){
-        const boleta = this.props.navigation.getParam('boleta_selecionada') 
+
+    _adicionarAtivo = () => {
+        const ativos = [ ...this.state.ativos]
+        const novoAtivo = this.state.novoAtivo
+        if (ativos.includes(novoAtivo)){
+            
+        } else {
+            ativos.push(novoAtivo)
+        }
+        
+        this.setState({ ativos, modalAtivoVisible: false, novoAtivo: null })
+
+    }
+
+    _removeAtivo = item => {
+        const ativos = this.state.ativos.filter(ativo => ativo !== item)
+
+        this.setState({ ativos, modalAtivoVisible: false })
+    }
+
+    componentWillMount(){
+        const evento = this.props.navigation.getParam('evento_selecionado') 
+       
         this.setState({
-            id: boleta.id,
-            ativo: boleta.ativo,
-            operation: boleta.operation,
-            lote: boleta.lote,
-            tradePrice: boleta.tradePrice,
-            contraparte: boleta.contraparte,
-            tradeDate: boleta.tradeDate,
-            settleDate: boleta.settleDate,
-            comments: boleta.comments,
+            id: evento.id,
+            titulo: evento.titulo,
+            ativos: evento.ativos,
+            vencimento: evento.vencimento,
+            comments: evento.comments,
+            boletas: evento.boletas
         })
     }
     
     render() {
-        let resultadosPossiveis = this.state.resultadosPossiveis.map( (res,i) => {
-            return <Picker.Item key={i} value={res} label={res} />
-        })
-
         return (
+
             <Container>      
                 <AddBoletaHeader onSave={()=>this.onPressSave()}
-                                 onCancel={()=> this.cancelarBoleta()}
-                                 header={'Novo Evento'}/>                                 
-                <KeyboardAwareScrollView>
-                    <Form>
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Data</Label>
-                            <DatePicker
-                                defaultDate={new Date()}
-                                minimumDate={new Date(2000, 1, 1)}
-                                maximumDate={new Date(2100, 12, 31)}
-                                locale={"en"}
-                                timeZoneOffsetInMinutes={undefined}
-                                modalTransparent={true}
-                                animationType={'slide'}
-                                androidMode={"default"}
-                                placeHolderText={moment(this.state.tradeDate).locale('pt-br').format('DD/MM/YYYY')}
-                                value={this.state.tradeDate}
-                                textStyle={{ color: "grey" }}
-                                placeHolderTextStyle={{ color: "#d3d3d3" }}
-                                onDateChange={this.onTradeDateChange.bind(this)}
-                            />
-                        </Item>
+                                 onCancel={()=> this.cancelarEvento()}
+                                 header={'Novo Evento'}/>    
+                
+                <Form>
+                    <Item inlineLabel style={styles.item}>
+                        <Label style={styles.label}>Título</Label>
+                        <Input style={styles.input} 
+                                placeholder='  ...   '
+                                value={this.state.lote ? `${this.state.lote}` : null}
+                                placeholderTextColor={'#E65100'}
+                                keyboardType='default'
+                                onChangeText={this.onTituloChange.bind(this)}
+                                />
                         
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Ativo</Label>
-                            <Picker
-                                iosHeader='Ativos'
-                                headerBackButtonText='Voltar'
-                                placeholder='Selecione'
-                                iosIcon={<Icon name="ios-arrow-down-outline" />}
-                                mode='dropdown'
-                                style={{  }}
-                                placeholderStyle={{color:'#E65100'}}
-                                selectedValue={this.state.ativo}
-                                onValueChange={this.onAtivoChange.bind(this)}>
+                    </Item>
 
-                                {resultadosPossiveis}
+                    <Item inlineLabel style={styles.item}>
+                        <Label style={styles.label}>Ativos</Label>
+                        <Button onPress={() => this.setState({modalAtivoVisible: true})}
+                                style={styles.ativosButton}>
+                            <Icon name='add' style={{fontSize:30}}/>
+                        </Button>
+                        <List scrollEnabled={false}
+                            dataArray={this.state.ativos}
+                            renderRow={(item) => 
+                                <ListItem style={{justifyContent:'space-between'}}>
+                                    <Text>{item}</Text>
+                                    <TouchableHighlight onPress={() => this._removeAtivo(item)}>
+                                        <Icon type='Ionicons' name='md-remove-circle' style={{color:'red'}}/>
+                                    </TouchableHighlight>
+                                </ListItem>
+                            }/>
+                    </Item>
+                    <Modal
+                        isVisible={this.state.modalAtivoVisible}
+                        transparent={true}
+                        animationType='slide' >
 
-                            </Picker>
-                            {/* <PickerAtivo resultadosPossiveis={resultadosPossiveis} /> */}
-                        </Item>
+                        <View style={{flex: 3}}/>
+                        <Form style={styles.modalAtivo}>
+                            <Item style={{borderBottomWidth:0}}>
+                                <Input style={styles.modalInput}
+                                    placeholder='Novo Ativo'
+                                    onChangeText={(value) => this.setState({novoAtivo: value})}/>
+                            </Item>
+                            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
+                                <Button 
+                                    style={{alignSelf:'center', margin: 10}}
+                                    onPress={() => this.setState({ modalAtivoVisible: false })}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                                <Button 
+                                    style={{alignSelf:'center', margin: 10}}
+                                    onPress={() => this._adicionarAtivo()}>
+                                    <Text>Adicionar</Text>
+                                </Button>
+                            </View>
+                        </Form>
+                        <View style={{flex: 3}}/>
+                    </Modal>
 
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Operação</Label>
-                            <Picker 
-                                iosHeader='Operação'
-                                headerBackButtonText='Voltar'
-                                placeholder='Compra | Venda'
-                                iosIcon={<Icon name="ios-arrow-down-outline" />}
-                                mode='dropdown'
-                                style={{  }}
-                                placeholderStyle={{color:'#E65100'}}
-                                selectedValue={this.state.operation}
-                                onValueChange={this.onOperationChange.bind(this)}>
-
-                                <Picker.Item key={1} value={'C'} label={'Compra'} />
-                                <Picker.Item key={2} value={'V'} label={'Venda'} />
-
-                            </Picker>
-                        </Item>
-
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Lote</Label>
-                            <Input style={styles.input} 
-                                    placeholder='  ...   '
-                                    value={this.state.lote ? `${this.state.lote}` : null}
-                                    placeholderTextColor={'#E65100'}
-                                    keyboardType='numeric'
-                                    onChangeText={this.onLoteChange.bind(this)}
-                                    />
-                        </Item>
-
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Preço</Label>
-                            <Input style={styles.input} 
-                                    placeholder='  $   '
-                                    value={this.state.tradePrice ? `${this.state.tradePrice}` : null}
-                                    placeholderTextColor={'#E65100'}
-                                    keyboardType='numeric'
-                                    onChangeText={this.onPriceChange.bind(this)}
-                                    />
-                        </Item>
-
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Contraparte</Label>
-                            <Input style={styles.input} 
-                                    placeholder='Nome do trouxa'
-                                    value={this.state.contraparte ? `${this.state.contraparte}` : null}
-                                    placeholderTextColor={'#E65100'}
-                                    keyboardType='default'
-                                    onChangeText={this.onContraparteChange.bind(this)}
-                                    />
-                        </Item>
-
-                        <Item inlineLabel style={styles.item}>
-                            <Label style={styles.label}>Vencimento</Label>
-                            <DatePicker
-                                defaultDate={new Date()}
-                                minimumDate={new Date(2000, 1, 1)}
-                                maximumDate={new Date(2100, 12, 31)}
-                                locale={"en"}
-                                timeZoneOffsetInMinutes={undefined}
-                                modalTransparent={true}
-                                animationType={'slide'}
-                                androidMode={"default"}
-                                placeHolderText={moment(this.state.settleDate).locale('pt-br').format('DD/MM/YYYY')}
-                                value={this.state.settleDate}
-                                textStyle={{ color: "grey" }}
-                                placeHolderTextStyle={{ color: "#d3d3d3" }}
-                                onDateChange={this.onSettleDateChange.bind(this)}
-                            />
-                        </Item>
-                        
-                        <Item stackedLabel>
-                            <Label>Comentários</Label>
-                            <Textarea style={styles.textArea}
-                                placeholder='' 
-                                selectionColor='rgb(76,217,100)'
-                                value={this.state.comments ? `${this.state.comments}` : null}
-                                rowSpan={5}
-                                onChangeText={this.onCommentChange.bind(this)}/>
-                        </Item>
-
-                    </Form>
-                </KeyboardAwareScrollView>
-
+                    <Item inlineLabel style={styles.item}>
+                        <Label style={styles.label}>Vencimento</Label>
+                        <DatePicker
+                            defaultDate={new Date()}
+                            minimumDate={new Date(2000, 1, 1)}
+                            maximumDate={new Date(2100, 12, 31)}
+                            locale={"en"}
+                            timeZoneOffsetInMinutes={undefined}
+                            modalTransparent={true}
+                            animationType={'slide'}
+                            androidMode={"default"}
+                            placeHolderText={moment(this.state.settleDate).locale('pt-br').format('DD/MM/YYYY')}
+                            value={this.state.settleDate}
+                            textStyle={{ color: "grey" }}
+                            placeHolderTextStyle={{ color: "#d3d3d3" }}
+                            onDateChange={this.onSettleDateChange.bind(this)}
+                        />
+                    </Item>
+                    
+                    <Item stackedLabel>
+                        <Label>Comentários</Label>
+                        <Textarea style={styles.textArea}
+                            placeholder='' 
+                            selectionColor='rgb(76,217,100)'
+                            value={this.state.comments ? `${this.state.comments}` : null}
+                            rowSpan={5}
+                            onChangeText={this.onCommentChange.bind(this)}/>
+                    </Item>
+                    
+                </Form>
+                                          
             </Container>
-
+      
         )
     }
 }
@@ -257,5 +226,25 @@ const styles = StyleSheet.create({
         width:'100%',
         paddingTop: 15,
         color:'rgb(76,217,100)'
-    }
+    },
+    ativosButton:{
+        alignSelf:'center',
+        width:75,
+        // height:'100%',
+        alignItems:'center',
+        justifyContent:'center',
+    },
+    modalAtivo:{
+        flex:4,
+        alignItems:'center',
+        justifyContent: 'center',
+    },
+    modalInput:{
+        backgroundColor:'white',
+        alignItems:'center',
+        justifyContent: 'center',
+        width: '100%',
+        textAlign:'center',
+        borderRadius:15,
+    },
 })

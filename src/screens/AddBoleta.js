@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {StyleSheet, Alert} from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import {Form, Picker, Textarea, Input, Item, Label, Icon, DatePicker, Container, Header, TabHeading} from 'native-base'
+import {Form, Picker, Textarea, Input, Item, Label, Icon, DatePicker, Container, Toast} from 'native-base'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import AddBoletaHeader from '../components/AddBoletaHeader'
@@ -20,11 +20,55 @@ export default class AddBoleta extends Component {
         }
       }
     onPressSave = () => {
-        if(this.state.ativo == null || this.state.operation === null || 
-            this.state.lote === null || this.state.tradePrice === null ||
-            this.state.contraparte === null) {
+        if (this.state.ativo == null) {
             
-            Alert.alert('Campos Incompletos','Preencha os campos em laranja')
+            Toast.show({
+                text:'Selecione um Ativo',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'warning'
+            })
+            return
+        } else if (this.state.operation === null) {
+
+            Toast.show({
+                text:'Selecione uma Operação',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'warning'
+            })
+            return
+        } else if (this.state.lote === null) {
+
+            Toast.show({
+                text:'Insira o Lote',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'warning'
+            })
+            return
+        } else if (this.state.tradePrice === null ) {
+
+            Toast.show({
+                text:'Insira o Preço',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'warning'
+            })
+            return
+        } else if (this.state.contraparte === null ) {
+
+            Toast.show({
+                text:'Insira a Contraparte',
+                buttonText:'OK',
+                duration: 3000,
+                position: 'bottom',
+                type:'warning'
+            })
             return
         }
 

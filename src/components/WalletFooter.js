@@ -47,7 +47,6 @@ export default class WalletFooter extends Component {
                 <FooterTab>
                     <Button vertical active={this.state.ActiveTab_2} onPress={() => this.activeTab(2)}>
                         <Icon name='add' style={{fontSize:32}}/>
-                        <Text>Nova Boleta</Text>
                     </Button>
                 </FooterTab>
             </Footer>
