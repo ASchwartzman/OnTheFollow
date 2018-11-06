@@ -151,7 +151,7 @@ export default class AddBoleta extends Component {
             <Container>      
                 <AddBoletaHeader onSave={()=>this.onPressSave()} 
                                  onCancel={()=> this.cancelarBoleta()}
-                                 header={'Nova Boleta'}   />                                 
+                                 header={'Boleta'}   />                                 
                 <KeyboardAwareScrollView>
                     <Form>
                         <Item inlineLabel style={styles.item}>

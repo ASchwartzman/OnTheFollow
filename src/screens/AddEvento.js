@@ -109,14 +109,14 @@ export default class AddEvento extends Component {
             <Container>      
                 <AddBoletaHeader onSave={()=>this.onPressSave()}
                                  onCancel={()=> this.cancelarEvento()}
-                                 header={'Novo Evento'}/>    
+                                 header={'Evento'}/>    
                 
                 <Form>
                     <Item inlineLabel style={styles.item}>
                         <Label style={styles.label}>Título</Label>
                         <Input style={styles.input} 
                                 placeholder='  ...   '
-                                value={this.state.lote ? `${this.state.lote}` : null}
+                                value={this.state.titulo ? `${this.state.titulo}` : null}
                                 placeholderTextColor={'#E65100'}
                                 keyboardType='default'
                                 onChangeText={this.onTituloChange.bind(this)}
@@ -180,8 +180,8 @@ export default class AddEvento extends Component {
                             modalTransparent={true}
                             animationType={'slide'}
                             androidMode={"default"}
-                            placeHolderText={moment(this.state.settleDate).locale('pt-br').format('DD/MM/YYYY')}
-                            value={this.state.settleDate}
+                            placeHolderText={moment(this.state.vencimento).locale('pt-br').format('DD/MM/YYYY')}
+                            value={this.state.vencimento}
                             textStyle={{ color: "grey" }}
                             placeHolderTextStyle={{ color: "#d3d3d3" }}
                             onDateChange={this.onSettleDateChange.bind(this)}
