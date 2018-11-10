@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet, Alert} from 'react-native'
+import {StyleSheet} from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Form, Picker, Textarea, Input, Item, Label, Icon, DatePicker, Container, Toast} from 'native-base'
 import moment from 'moment'

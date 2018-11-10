@@ -5,11 +5,13 @@ import { Container,
     Content,
     Toast,
     ActionSheet,
+    Text
 } from 'native-base'
 import BoletaItem from '../components/BoletaItem'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import WalletFooter from '../components/WalletFooter'
+import Pagamentos from '../components/Pagamentos'
 
 const boletas = [
     {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
@@ -43,6 +45,7 @@ export default class Wallet extends Component {
             showAddBoleta: false,
             filtroChecked: false,
             scroll: true,
+            ActiveSheet:'boletas'
         }
     }
 
@@ -76,7 +79,7 @@ export default class Wallet extends Component {
                 }
             })
             
-            this.setState({boletas}, this._updateBoletaNoEvento)
+            this.setState({boletas, ActiveSheet: 'boletas'}, this._updateBoletaNoEvento)
             Toast.show({
                 text:'Boleta Atualizada',
                 buttonText:'OK',
@@ -87,7 +90,7 @@ export default class Wallet extends Component {
 
         } else {
             boletas.push(newBoleta)
-            this.setState({boletas}, this._updateBoletaNoEvento )
+            this.setState({boletas, ActiveSheet: 'boletas'}, this._updateBoletaNoEvento )
             Toast.show({
                 text:'Boleta Salva',
                 buttonText:'OK',
@@ -115,7 +118,7 @@ export default class Wallet extends Component {
                 }
             })
             
-            this.setState({eventos, eventoAtivoID: newEvento.id}, this.filterEvento)
+            this.setState({eventos, eventoAtivoID: newEvento.id, ActiveSheet: 'boletas'}, this.filterEvento)
             Toast.show({
                 text:'Evento Atualizado',
                 buttonText:'OK',
@@ -126,7 +129,7 @@ export default class Wallet extends Component {
 
         } else {
             eventos.push(newEvento)
-            this.setState({eventos, eventoAtivoID: newEvento.id}, this.filterEvento )
+            this.setState({eventos, eventoAtivoID: newEvento.id, ActiveSheet: 'boletas'}, this.filterEvento )
             Toast.show({
                 text:'Evento Criado',
                 buttonText:'OK',
@@ -307,6 +310,12 @@ export default class Wallet extends Component {
 
     }
 
+    _calculatePagamentos = () => {
+
+        this.setState({ActiveSheet:'pagamentos'})
+
+    }
+
     _listarEventos = () => {
         const eventos = [...this.state.eventos]
         const eventos_lista = []
@@ -351,7 +360,7 @@ export default class Wallet extends Component {
 
         if (newEvento) {
             this.props.navigation.setParams({newEvento:null})
-            this.newEventoAdd(newEvento)  
+            this.newEventoAdd(newEvento)
         }
 
         if (selectEventoId) {
@@ -370,16 +379,26 @@ export default class Wallet extends Component {
                     onPressEye={() => this.toggleEye()}
                     onPressEdit={() => this._openNovoEvento(0)}
                     onPressMenu={() => this._listarEventos()}/>
-                <Content scrollEnabled={this.state.scroll}>
-                    <FlatList style={styles.listContainer}
-                        scrollEnabled={this.state.scroll}
-                        keyExtractor={item => `${item.id}`}
-                        extraData={this.state}
-                        data={this.state.boletasVisiveis}
-                        renderItem={({item}) => this.renderItem({item})}
-                    />
-                </Content>
-                <WalletFooter onPressTab2={() => this._openActionSheet()}/>
+                {this.state.ActiveSheet === 'pagamentos' ?
+                        <Content>
+                            <Pagamentos 
+                                    ativos={this.state.resultadosPossiveis}
+                                    boletas={this.state.boletas}/>
+                        </Content>
+                        : 
+                        <Content scrollEnabled={this.state.scroll}>
+                        <FlatList style={styles.listContainer}
+                            scrollEnabled={this.state.scroll}
+                            keyExtractor={item => `${item.id}`}
+                            extraData={this.state}
+                            data={this.state.boletasVisiveis}
+                            renderItem={({item}) => this.renderItem({item})}
+                        />
+                    </Content>}
+                <WalletFooter
+                    onPressTab0={() => this.setState({ ActiveSheet:'boletas'})} 
+                    onPressTab1={() => this._calculatePagamentos()}
+                    onPressTab2={() => this._openActionSheet()}/>
             </Container>
         )                
      }

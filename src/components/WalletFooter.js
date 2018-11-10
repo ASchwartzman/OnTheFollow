@@ -16,11 +16,11 @@ export default class WalletFooter extends Component {
         switch(tab) {
             case 0:
                 this.setState({ActiveTab_0:true, ActiveTab_1: false, ActiveTab_2:false})
-                return this.props.onPressTab0
+                return this.props.onPressTab0()
                 break
             case 1:
                 this.setState({ActiveTab_0:false, ActiveTab_1:true, ActiveTab_2:false})
-                return this.props.onPressTab1
+                return this.props.onPressTab1()
                 break
             case 2:
                 this.setState({ActiveTab_0:true, ActiveTab_1:false, ActiveTab_2:false})
