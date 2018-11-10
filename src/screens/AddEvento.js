@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet, View, TouchableHighlight , Keyboard} from 'react-native'
+import {StyleSheet, View, TouchableHighlight , Keyboard, FlatList} from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Form,
         Picker,
@@ -60,7 +60,7 @@ export default class AddEvento extends Component {
     }
 
     onSettleDateChange = (value) => {
-        this.setState({ settleDate: value })
+        this.setState({ vencimento: value })
     }
 
     onCommentChange = (value) => {
@@ -130,9 +130,10 @@ export default class AddEvento extends Component {
                                 style={styles.ativosButton}>
                             <Icon name='add' style={{fontSize:30}}/>
                         </Button>
-                        <List scrollEnabled={false}
-                            dataArray={this.state.ativos}
-                            renderRow={(item) => 
+                        <FlatList
+                            keyExtractor={(item, index) => item}
+                            data={this.state.ativos}
+                            renderItem={({item}) => 
                                 <ListItem style={{justifyContent:'space-between'}}>
                                     <Text>{item}</Text>
                                     <TouchableHighlight onPress={() => this._removeAtivo(item)}>

@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Root} from 'native-base'
 import Wallet from './src/screens/Wallet'
-import AddBoleta from './src/screens/AddBoleta';
+import AddBoleta from './src/screens/AddBoleta'
 import AddEvento from './src/screens/AddEvento'
+import EventosList from './src/screens/EventosList'
 import { createStackNavigator , StackNavigator} from 'react-navigation'
 
 // export default class App extends Component {
@@ -26,7 +27,13 @@ const AppNavigator = StackNavigator({
   },
   EventoScreen:{
     screen: AddEvento
-  }
+  },
+  EventosListScreen: {
+    screen: EventosList,
+    navigationOptions: ({ navigation }) => ({
+      title:`Eventos`,
+    })
+  },
 })
 export default () => 
   <Root>

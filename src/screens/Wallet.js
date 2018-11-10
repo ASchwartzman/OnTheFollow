@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { FlatList, StyleSheet, Alert } from 'react-native'
+import { FlatList, StyleSheet, AsyncStorage } from 'react-native'
 import WalletHeader from '../components/WalletHeader'
 import { Container,
     Content,
@@ -14,16 +14,10 @@ import WalletFooter from '../components/WalletFooter'
 const boletas = [
     {id: 1, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
     {id: 2, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
-    // {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
-    // {id: 4, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
-    // {id: 5, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
-    // {id: 6, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
-    // {id: 7, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
-    // {id: 8, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
-    // {id: 9, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
-    // {id: 10, checked:true, ativo:'Alemanha', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
-    // {id: 11, checked:false, ativo:'Brasil', operation: 'V', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
-    // {id: 12, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
+    {id: 3, checked:false, ativo:'França', operation: 'V', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
+    {id: 4, checked:true, ativo:'Argentina', operation: 'C', contraparte: 'Fill', lote: 100, tradePrice: 19, tradeDate: new Date('2015-09-17')},
+    {id: 5, cheked:false, ativo:'Alemanha', operation: 'C', contraparte: 'Marcus', lote: 100, tradePrice: 25, tradeDate: new Date('2013-06-02')},
+    {id: 6, checked:false, ativo:'Argentina', operation: 'C', contraparte: 'Naman', lote: 50, tradePrice: 13, tradeDate: new Date()},
 ]
 
 const eventos = [
@@ -40,6 +34,7 @@ export default class Wallet extends Component {
         this.state = {
             eventos: eventos,
             eventoAtivoID: eventos[0].id,
+            contrapartesGlobais:[],
             resultadosPossiveis: ['Brasil','Argentina','França','Alemanha'],
             bookTitle:'Copa 2018',
             settleDate: new Date('2018-12-15'),
@@ -50,7 +45,20 @@ export default class Wallet extends Component {
             scroll: true,
         }
     }
+
+    updateContrapartesGlobais = () => {
+        let contrapartesGlobais = [...this.state.contrapartesGlobais]
+
+    }
     
+    _storeData = async (key, data) => {
+        try {
+          await AsyncStorage.setItem(key, data)
+        } catch (error) {
+          // Error saving data
+        }
+      }
+
     newBoletaAdd = (newBoleta) => {
         
         const boletas_id = []
@@ -64,6 +72,7 @@ export default class Wallet extends Component {
             boletas.forEach((boleta, index)=>{
                 if (boleta.id === newBoleta.id) {
                     boletas[index] = newBoleta
+                    return
                 }
             })
             
@@ -102,6 +111,7 @@ export default class Wallet extends Component {
             eventos.forEach((evento, index)=>{
                 if (evento.id === newEvento.id) {
                     eventos[index] = newEvento
+                    return
                 }
             })
             
@@ -118,7 +128,7 @@ export default class Wallet extends Component {
             eventos.push(newEvento)
             this.setState({eventos, eventoAtivoID: newEvento.id}, this.filterEvento )
             Toast.show({
-                text:'Evento Salvo',
+                text:'Evento Criado',
                 buttonText:'OK',
                 duration: 3000,
                 position: 'bottom',
@@ -135,6 +145,7 @@ export default class Wallet extends Component {
         eventos.forEach((evento, index) => {
             if (evento.id === eventoAtivoID) {
                 eventos[index].boletas = boletas
+                return
             }
         })
 
@@ -148,6 +159,7 @@ export default class Wallet extends Component {
         eventos.forEach((evento, index) => {
             if (evento.id === this.state.eventoAtivoID) {
                 eventoSelecionado = eventos[index]
+                return
             }
         })
 
@@ -170,7 +182,9 @@ export default class Wallet extends Component {
         let oldBoletas = [ ...this.state.boletas ]
         let boletasVisiveis = this.state.filtroChecked ? oldBoletas.filter(item => !item.checked) : oldBoletas
        
-        this.setState({boletasVisiveis})     
+        this.setState({boletasVisiveis})
+        this._storeData('lastState',JSON.stringify(this.state))
+
     }
 
     removeBoleta = id => {     
@@ -226,16 +240,16 @@ export default class Wallet extends Component {
 
     _openActionSheet = () => {
         ActionSheet.show({
-            options:['Novo Evento','Nova Boleta','Cancelar'],
+            options:['Nova Boleta','Novo Evento','Cancelar'],
             cancelButtonIndex: 2,  
         },
         buttonIndex => {
             switch(buttonIndex){
                 case 0:
-                    this._openNovoEvento(1)
+                    this._openNovaBoleta()
                     break
                 case 1:
-                    this._openNovaBoleta()
+                    this._openNovoEvento(1)
                     break
                 default:
                     
@@ -276,16 +290,6 @@ export default class Wallet extends Component {
                 })
 
                 this.props.navigation.navigate('EventoScreen',{evento_selecionado})
-                    // this.props.navigation.navigate('EventoScreen',{
-                    //     evento_selecionado: { 
-                    //         id: this.state.eventoAtivoID,
-                    //         titulo: this.state.eventoent,
-                    //         ativos: [],
-                    //         vencimento: new Date(),
-                    //         comments: '',
-                    //         boletas:[],
-                    //     }
-                    // })
                 break
             case 1:
                     this.props.navigation.navigate('EventoScreen',{
@@ -301,7 +305,18 @@ export default class Wallet extends Component {
                  break
         }
 
-    } 
+    }
+
+    _listarEventos = () => {
+        const eventos = [...this.state.eventos]
+        const eventos_lista = []
+
+        eventos.forEach((evento, index) => {
+            eventos_lista.push({id: evento.id, titulo: evento.titulo, num_boletas: evento.boletas.length})
+        })
+        
+        this.props.navigation.navigate('EventosListScreen', {eventos_lista})
+    }
 
     toggleEye = () => {
         let filtroChecked = !this.state.filtroChecked
@@ -312,13 +327,23 @@ export default class Wallet extends Component {
         // this.filterBoletas()
     }
 
-    componentDidMount() {
-        this.filterBoletas()
+    componentDidMount = async () => {
+        const data = await AsyncStorage.getItem('lastState')
+        const lastState = JSON.parse(data) || {...this.state}
+        lastState.eventos.forEach(evento => {
+            evento.boletas.forEach(boleta => {
+                boleta.tradeDate = new Date(boleta.tradeDate)
+            })
+        })
+        
+
+        this.setState({ ...lastState }, this.filterEvento)
     }
 
     componentDidUpdate() {
         const newBoleta = this.props.navigation.getParam('newBoleta')
         const newEvento = this.props.navigation.getParam('newEvento')
+        const selectEventoId = this.props.navigation.getParam('selectEventoId')
         if (newBoleta) {
             this.props.navigation.setParams({newBoleta:null})
             this.newBoletaAdd(newBoleta)   
@@ -328,11 +353,12 @@ export default class Wallet extends Component {
             this.props.navigation.setParams({newEvento:null})
             this.newEventoAdd(newEvento)  
         }
-        
-    }
 
-    test = () => {
-       
+        if (selectEventoId) {
+            this.props.navigation.setParams({selectEventoId:null})
+            this.setState({eventoAtivoID: selectEventoId}, this.filterEvento)
+        }
+        
     }
 
     render() {
@@ -342,7 +368,8 @@ export default class Wallet extends Component {
                     bookTitle={`${this.state.bookTitle} (${this.state.boletasVisiveis.length})`} 
                     checked={this.state.filtroChecked}
                     onPressEye={() => this.toggleEye()}
-                    onPressEdit={() => this._openNovoEvento(0)}/>
+                    onPressEdit={() => this._openNovoEvento(0)}
+                    onPressMenu={() => this._listarEventos()}/>
                 <Content scrollEnabled={this.state.scroll}>
                     <FlatList style={styles.listContainer}
                         scrollEnabled={this.state.scroll}

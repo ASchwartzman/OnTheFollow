@@ -23,7 +23,7 @@ export default class HeaderIconExample extends Component {
           <Body style={{flex:2,flexDirection:'row',justifyContent:'flex-start'}}>
             <Title>{this.props.bookTitle}</Title>
           </Body>
-          <Right style={{flex:2,flexDirection:'row', justifyContent:'flex-end'}}>
+          <Right style={{flex:2,flexDirection:'row', justifyContent:'space-between'}}>
             <Button transparent onPress={this.props.onPressSearch}>
               <Icon type='EvilIcons' name='search' />
             </Button>

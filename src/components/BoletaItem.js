@@ -1,24 +1,24 @@
 import React, { Component } from 'react'
 import {StyleSheet, View, TouchableOpacity, TouchableHighlight} from 'react-native'
 import Swipeable from 'react-native-swipeable'
-import { ListItem , Left, Body, Right, Text, CheckBox, Badge, Icon} from 'native-base'
+import { ListItem, Body, Text, CheckBox, Badge, Icon} from 'native-base'
 
 
 
 
 export default class BoletaItem extends Component {
-    state={
-        badgeColor: null
-    }
+    // state={
+    //     badgeColor: null
+    // }
 
-    setBadgeColor = () => {
-        let badgeColor = (this.props.operation === 'C') ? {backgroundColor:'#5cb85c'} : {backgroundColor:'#d9534f'}
-        this.setState({ badgeColor }) 
-    }
+    // setBadgeColor = () => {
+    //     let badgeColor = (this.props.operation === 'C') ? {backgroundColor:'#5cb85c'} : {backgroundColor:'#d9534f'}
+    //     this.setState({ badgeColor }) 
+    // }
 
-    componentWillMount() {
-        this.setBadgeColor()
-    }
+    // componentWillMount() {
+    //     this.setBadgeColor()
+    // }
 
     renderRightButtons = () => {
         return [
@@ -30,19 +30,22 @@ export default class BoletaItem extends Component {
             ]
     }
     
-
     render() {
+        let badgeColor = (this.props.operation === 'C') ? {backgroundColor:'#5cb85c'} : {backgroundColor:'#d9534f'}
+        let backgroundColorChecked = this.props.checked ? 'rgba(0,0,255,0.03)':'rgba(0,0,255,0)'
         return (
             <Swipeable rightButtons={this.renderRightButtons()}
+                        rightActionActivationDistance={300}
+                        onRightActionActivate={this.props.onRightButtonPress}
                         onSwipeStart={this.props.onSwipeStart}
                         onSwipeRelease={this.props.onSwipeRelease}>
-                <ListItem style={{borderBottomWidth: 0.2}}>
+                <ListItem style={[styles.listItem,{backgroundColor: backgroundColorChecked}]}>
                     <View style={styles.left}>
                         <CheckBox onPress={this.props.onPressCheckbox} checked={this.props.checked}
-                                color='green' style={{height:27, width: 27, alignItems:'center', justifyContent:'center', borderRadius: 27}} />
+                                color='royalblue' style={{height:25, width: 25, alignItems:'center', justifyContent:'center', borderRadius: 25, padding:3}} />
                     </View>
-                    <TouchableOpacity onPress={this.props.onPressBody} style={styles.touchable}>   
-                        <Body style={styles.body}>
+                    <TouchableOpacity activeOpacity={0.3} onPress={this.props.onPressBody} style={[styles.touchable, {backgroundColor: 'rgba(0,0,0,0)'}]}>   
+                        <Body style={[styles.body]}>
                             <View>    
                                 <Text style={styles.ativo}>{this.props.ativo}</Text>
                                 <Text note style={{fontWeight:'bold'}}>{this.props.contraparte}</Text>
@@ -55,7 +58,7 @@ export default class BoletaItem extends Component {
                             </View>
                         </Body>
                         <View style={styles.right}>
-                            <Badge big style={[this.state.badgeColor]}>
+                            <Badge big style={[badgeColor]}>
                                 <Text>{this.props.operation}</Text>
                             </Badge>
                                 <Icon type='FontAwesome' name='angle-right' style={styles.rightArrow}/>
@@ -68,6 +71,10 @@ export default class BoletaItem extends Component {
 }
 
 const styles = StyleSheet.create({
+    listItem:{
+        borderBottomWidth: 0.2,
+        marginLeft: 0,
+    },
     touchable:{
         flexDirection:'row',
         alignItems:'center',
@@ -92,7 +99,6 @@ const styles = StyleSheet.create({
         color:'orange'
     },
     body:{
-        backgroundColor:'white',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent:'space-between',
@@ -105,11 +111,11 @@ const styles = StyleSheet.create({
     },
     rightButton1:{
         flexDirection:'row',
-        width: 75,
         height:'100%',
         alignItems:'center',
+        justifyContent:'flex-start',
+        paddingLeft: 30,
         backgroundColor:'red',
-        justifyContent:'center'
     }
 
 })
