@@ -175,7 +175,7 @@ export default class Wallet extends Component {
             resultadosPossiveis,
             bookTitle,
             settleDate,
-            boletas
+            boletas,
         }, this.filterBoletas)
 
     }
@@ -316,6 +316,12 @@ export default class Wallet extends Component {
 
     }
 
+    _atualizarListaEventos = (eventos_id) => {
+        const eventos = this.state.eventos.filter(evento => eventos_id.includes(evento.id))
+
+        this.setState({eventos}, this.filterEvento)
+    }
+
     _listarEventos = () => {
         const eventos = [...this.state.eventos]
         const eventos_lista = []
@@ -324,7 +330,10 @@ export default class Wallet extends Component {
             eventos_lista.push({id: evento.id, titulo: evento.titulo, num_boletas: evento.boletas.length})
         })
         
-        this.props.navigation.navigate('EventosListScreen', {eventos_lista})
+        this.props.navigation.navigate('EventosListScreen', {
+            eventos_lista,
+            onNavigateBack: this._atualizarListaEventos.bind(this),
+        })
     }
 
     toggleEye = () => {
@@ -344,7 +353,6 @@ export default class Wallet extends Component {
                 boleta.tradeDate = new Date(boleta.tradeDate)
             })
         })
-        
 
         this.setState({ ...lastState }, this.filterEvento)
     }
@@ -353,6 +361,13 @@ export default class Wallet extends Component {
         const newBoleta = this.props.navigation.getParam('newBoleta')
         const newEvento = this.props.navigation.getParam('newEvento')
         const selectEventoId = this.props.navigation.getParam('selectEventoId')
+        const eventos_lista = this.props.navigation.getParam('eventos_lista')
+        
+        if (eventos_lista) {
+            alert(eventos_lista.length)
+            this.setState({eventos_lista})
+        }
+
         if (newBoleta) {
             this.props.navigation.setParams({newBoleta:null})
             this.newBoletaAdd(newBoleta)   
@@ -364,8 +379,9 @@ export default class Wallet extends Component {
         }
 
         if (selectEventoId) {
+            let ActiveSheet = 'boletas'
             this.props.navigation.setParams({selectEventoId:null})
-            this.setState({eventoAtivoID: selectEventoId}, this.filterEvento)
+            this.setState({ActiveSheet, eventoAtivoID: selectEventoId}, this.filterEvento)
         }
         
     }
@@ -383,7 +399,7 @@ export default class Wallet extends Component {
                         <Content>
                             <Pagamentos 
                                     ativos={this.state.resultadosPossiveis}
-                                    boletas={this.state.boletas}/>
+                                    boletas={this.state.boletasVisiveis}/>
                         </Content>
                         : 
                         <Content scrollEnabled={this.state.scroll}>
@@ -396,6 +412,7 @@ export default class Wallet extends Component {
                         />
                     </Content>}
                 <WalletFooter
+                    ActiveTab={this.state.ActiveSheet}
                     onPressTab0={() => this.setState({ ActiveSheet:'boletas'})} 
                     onPressTab1={() => this._calculatePagamentos()}
                     onPressTab2={() => this._openActionSheet()}/>

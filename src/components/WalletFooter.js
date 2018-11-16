@@ -6,7 +6,7 @@ export default class WalletFooter extends Component {
     constructor(props){
         super(props)
         this.state = {
-            ActiveTab_0:true,
+            ActiveTab_0:false,
             ActiveTab_1:false,
             ActiveTab_2:false
         }
@@ -25,6 +25,19 @@ export default class WalletFooter extends Component {
             case 2:
                 this.setState({ActiveTab_0:true, ActiveTab_1:false, ActiveTab_2:false})
                 return this.props.onPressTab2()
+                break
+        }
+    }
+
+    componentDidMount() {
+        let ActiveTab = this.props.ActiveTab
+        
+        switch (ActiveTab) {
+            case 'boletas':
+                this.setState({ActiveTab_0:true, ActiveTab_1: false, ActiveTab_2: false})
+                break
+            case 'pagamentos':
+                this.setState({ActiveTab_0:false, ActiveTab_1: true, ActiveTab_2: false})
                 break
         }
     }

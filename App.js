@@ -7,16 +7,6 @@ import AddEvento from './src/screens/AddEvento'
 import EventosList from './src/screens/EventosList'
 import { createStackNavigator , StackNavigator} from 'react-navigation'
 
-// export default class App extends Component {
-//   render() {
-//     return (
-          
-//         <Wallet />
-//         // <AddBoleta />
-      
-//     )
-//   }
-// }
 
 const AppNavigator = StackNavigator({
   WalletScreen: {

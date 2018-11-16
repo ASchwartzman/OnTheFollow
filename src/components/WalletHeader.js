@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
+import { 
+  Text,
+  Header,
+  Left,
+  Body,
+  Right,
+  Button,
+  Icon,
+  Title
+} from 'native-base';
 
 export default class HeaderIconExample extends Component {
 
@@ -15,7 +24,7 @@ export default class HeaderIconExample extends Component {
   render() {
     return (
         <Header>
-          <Left style={{flex:1,flexDirection:'row', justifyContent:'flex-start'}}>
+          <Left style={{flex:1,flexDirection:'row', justifyContent:'flex-start', maxWidth:50}}>
             <Button transparent onPress={this.props.onPressMenu}>
               <Icon name='menu' />
             </Button>
@@ -23,15 +32,16 @@ export default class HeaderIconExample extends Component {
           <Body style={{flex:2,flexDirection:'row',justifyContent:'flex-start'}}>
             <Title>{this.props.bookTitle}</Title>
           </Body>
-          <Right style={{flex:2,flexDirection:'row', justifyContent:'space-between'}}>
-            <Button transparent onPress={this.props.onPressSearch}>
+          <Right style={{flex:2,flexDirection:'row', justifyContent:'flex-end', alignItems: 'center'}}>
+            {/* <Button transparent onPress={this.props.onPressSearch}>
               <Icon type='EvilIcons' name='search' />
-            </Button>
+            </Button> */}
             <Button transparent onPress={this.props.onPressEye}>
               <Icon type='Feather' name={this.state.checkedButton} style={{fontSize:20}}/>
             </Button>
-            <Button transparent onPress={this.props.onPressEdit}>
-              <Icon type='FontAwesome' name='edit' style={{fontSize:25}}/>
+            <Button hasText transparent onPress={this.props.onPressEdit}>
+              <Text>Editar</Text>
+              {/* <Icon type='FontAwesome' name='edit' style={{fontSize:25}}/> */}
             </Button>
           </Right>
         </Header>

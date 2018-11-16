@@ -7,6 +7,7 @@ import {
     ListItem,
     Item,
     Text,
+    Badge
 } from 'native-base'
 
 
@@ -70,16 +71,19 @@ export default class Pagamentos extends Component {
             }
         })
 
-        let resultadoColor = resultado_nome < 0 ? 'red' : 'blue'
+        let resultadoColor = resultado_nome < 0 ? true : false
         if (typeof(resultado_nome) != 'string') {
             resultado_nome = (resultado_nome).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
         }
 
         let resultadoContraparteColor = nome == 'Total' ? "#cde1f9" : 'rgba(0,0,0,0)'
+        let fontWeight = nome == 'Total' ? 'bold' : 'normal'
         return (
             <ListItem noIndent style={[styles.resultadoNome,{backgroundColor: resultadoContraparteColor}]}>
-                <Text>{nome}</Text>
-                <Text style={{color: resultadoColor}}>$ {resultado_nome}</Text>
+                <Text style={{fontWeight}}>{nome}</Text>
+                <Badge primary={!resultadoColor} danger={resultadoColor}>
+                    <Text>$ {resultado_nome}</Text>
+                </Badge>
             </ListItem>
         )
     }
@@ -93,7 +97,7 @@ export default class Pagamentos extends Component {
         return (
             <Form>
                 <Item stackedLabel>
-                    <Label style={{marginBottom:5}}>Resultado Final</Label>
+                    <Label style={{marginBottom:10}}>Resultado Final</Label>
                     <RadioForm style={styles.radioForm}
                         formHorizontal={true}
                         labelHorizontal={false}
@@ -104,7 +108,7 @@ export default class Pagamentos extends Component {
                         onPress={value => this.setState({resultadoFinal: value})}/>
                 </Item>
                 <Item stackedLabel>
-                    <Label style={{marginBottom:5}}>Pagar / Receber</Label>
+                    <Label style={{marginBottom:10}}>Pagar / Receber</Label>
                     <FlatList
                         extraData={this.state} 
                         keyExtractor={item => `${item}`}
